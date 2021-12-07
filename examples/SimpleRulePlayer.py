@@ -87,7 +87,7 @@ class SimpleRulePlayer(Player):
 
     def choose_move(self, battle):
         maxDamage = self.get_max_damage(battle.available_moves)
-        oppMaxDamage = self.get_max_damage(battle.opponent_available_moves)
+        oppMaxDamage = self.get_max_damage(battle.opponent_active_pokemon.moves)
         # if speed > opp speed
         if(battle.active_pokemon.base_stats["spd"] > battle.opponent_active_pokemon.base_stats["spd"]):
              # if max damage * .925 > oppHealth
