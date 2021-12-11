@@ -168,7 +168,7 @@ class SmartMinimaxPlayer(Player):
         for pokemon in node.battle.team.keys():
             if node.battle.get_pokemon(pokemon, True).base_stats["atk"] > node.battle.get_pokemon(pokemon, True).base_stats["spe"] and node.battle.get_pokemon(pokemon, True).status == "brn": 
                 score += 125
-                
+
         # Lose points for getting outsped by opponent
         #if BattleUtilities.opponent_can_outspeed(node.current_pokemon, node.opponent_pokemon):
         #    score -= 25
@@ -201,7 +201,7 @@ async def main():
     await smart_minimax_player.battle_against(smart_damage_player, n_battles=1000)
 
     print(
-        "minimax player won %d / 100 battles against smart_damage_player (this took %f seconds)"
+        "smart minimax player won %d / 100 battles against smart_damage_player (this took %f seconds)"
         % (
             smart_minimax_player.n_won_battles, time.time() - start
         )
