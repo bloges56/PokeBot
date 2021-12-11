@@ -10,6 +10,7 @@ from poke_env.player.random_player import RandomPlayer
 from MaxDamagePlayer import MaxDamagePlayer
 from SmartDamagePlayer import SmartDamagePlayer
 from MiniMax import MinimaxPlayer
+from SmartMiniMax import SmartMinimaxPlayer
 from poke_env.player.player import Player
 from poke_env.player.baselines import SimpleHeuristicsPlayer
 
@@ -152,6 +153,24 @@ async def main():
     )
 
     await smart_damage_player.battle_against(minimax_player, n_battles=1000)
+
+    print(
+        "smart_damage_player won %d / 1000 battles against minimax_player (this took %f seconds)"
+        % (
+            smart_damage_player.n_won_battles, time.time() - start
+        )
+    )
+
+    # Smart vs SMart Minimax
+    start = time.time()
+    smart_damage_player = SmartDamagePlayer(
+        battle_format="gen8randombattle",
+    )
+    smart_minimax_player = SmartMinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    await smart_damage_player.battle_against(smart_minimax_player, n_battles=1000)
 
     print(
         "smart_damage_player won %d / 1000 battles against minimax_player (this took %f seconds)"
