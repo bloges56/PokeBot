@@ -165,7 +165,7 @@ async def main():
     await minimax_player.battle_against(smart_damage_player, n_battles=1000)
 
     print(
-        "minimax player won %d / 100 battles against smart_damage_player (this took %f seconds)"
+        "minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
         % (
             minimax_player.n_won_battles, time.time() - start
         )

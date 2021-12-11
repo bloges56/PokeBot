@@ -15,6 +15,7 @@ import BattleUtilities
 from poke_env.player.random_player import RandomPlayer
 from MaxDamagePlayer import MaxDamagePlayer
 from SmartDamagePlayer import SmartDamagePlayer
+from MiniMax import MinimaxPlayer
 from poke_env.player.player import Player
 from poke_env.environment.move_category import MoveCategory
 from GameNode import GameNode
@@ -201,7 +202,24 @@ async def main():
     await smart_minimax_player.battle_against(smart_damage_player, n_battles=1000)
 
     print(
-        "smart minimax player won %d / 100 battles against smart_damage_player (this took %f seconds)"
+        "smart minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        % (
+            smart_minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+    start = time.time()
+    minimax_player = MinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+    smart_minimax_player = SmartMinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    await minimax_player.battle_against(smart_minimax_player, n_battles=1000)
+
+    print(
+        "smart_minimax_player won %d / 1000 battles against minimax_player (this took %f seconds)"
         % (
             smart_minimax_player.n_won_battles, time.time() - start
         )
