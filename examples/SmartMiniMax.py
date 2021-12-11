@@ -7,6 +7,7 @@
 import asyncio
 import time
 import sys
+from typing import Tuple
 
 sys.path.append("..")
 
@@ -124,25 +125,50 @@ class SmartMinimaxPlayer(Player):
                 else:
                     damage = pokemon.current_hp - node.opponent_HP[pokemon] 
                     score += 3 * damage
-            #else: 
-                #print(f"Pokemon is {pokemon}, HP is None")
+            else: 
+                score += 50
         # Lose points for taking damage or getting knocked out
         for pokemon in node.current_HP.keys():
             if node.current_HP[pokemon] <= 0 and pokemon.current_hp > 0: 
                 score -= 100
-            else: 
+            elif pokemon.current_hp is None: 
+                score -= 50
+            else:
                 damage = (pokemon.current_hp / pokemon.max_hp) - (node.current_HP[pokemon] / pokemon.max_hp)
                 score -= damage
-
-        #+- 50 for every pokemon that is fainted
         #+- 150 for sleep
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).status == "slp": 
+                score += 150
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).status == "slp": 
+                score -= 150
         #+- 75 for toxic
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).status == "tox":  
+                score += 75
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).status == "tox":  
+                score -= 75
         #+- 50 for paralysis
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).status == "par":  
+                score += 50
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).status == "par":  
+                score -= 50
         #if opp pokemon physical attack is greater than special attack and it has burn status
-            #+ 125
-
-
-
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).base_stats["atk"] > node.battle.get_pokemon(pokemon).base_stats["spe"] and node.battle.get_pokemon(pokemon).status == "brn": 
+                score += 125
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).base_stats["atk"] > node.battle.get_pokemon(pokemon, True).base_stats["spe"] and node.battle.get_pokemon(pokemon, True).status == "brn": 
+                score += 125
+                
         # Lose points for getting outsped by opponent
         #if BattleUtilities.opponent_can_outspeed(node.current_pokemon, node.opponent_pokemon):
         #    score -= 25
