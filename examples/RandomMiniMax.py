@@ -7,6 +7,7 @@
 import asyncio
 import time
 import sys
+import random
 from typing import Tuple
 
 sys.path.append("..")
@@ -21,11 +22,11 @@ from poke_env.environment.move_category import MoveCategory
 from GameNode import GameNode
 from poke_env.environment.pokemon import Pokemon
 
-class SmartMinimaxPlayer(Player): 
+class RandomMinimaxPlayer(Player): 
 
     previous_action = None
     maxDepth = 1 
-    statusWeight = 2
+    statusWeight = 1
 
     # The nodes keep track of battle states, moves are transitions between states
     def choose_move(self, battle):
@@ -43,12 +44,11 @@ class SmartMinimaxPlayer(Player):
         else: 
             self.minimax(starting_node, 0, True)
         child_nodes = starting_node.children
-        best_score = float('-inf')
-        best_node = None
+        child_scores = []
         for child in child_nodes:
-            if child.score >= best_score: 
-                best_score = child.score
-                best_node = child
+            child_scores.append(child.score)
+        best_node = None
+        best_node = random.choices(child_nodes, weights = child_scores, k=1)[0]
         if best_node == None: 
             #print(f"Best node is none for some reason! Length of child_nodes is {len(child_nodes)}")
             self.previous_action = None
@@ -198,16 +198,16 @@ async def main():
     smart_damage_player = SmartDamagePlayer(
         battle_format="gen8randombattle",
     )
-    smart_minimax_player = SmartMinimaxPlayer(
+    random_minimax_player = RandomMinimaxPlayer(
         battle_format="gen8randombattle",
     )
 
-    await smart_minimax_player.battle_against(smart_damage_player, n_battles=1000)
+    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
 
     print(
         "smart minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
         % (
-            smart_minimax_player.n_won_battles, time.time() - start
+            random_minimax_player.n_won_battles, time.time() - start
         )
     )
 
@@ -215,16 +215,16 @@ async def main():
     minimax_player = MinimaxPlayer(
         battle_format="gen8randombattle",
     )
-    smart_minimax_player = SmartMinimaxPlayer(
+    random_minimax_player = RandomMinimaxPlayer(
         battle_format="gen8randombattle",
     )
 
-    await minimax_player.battle_against(smart_minimax_player, n_battles=1000)
+    await minimax_player.battle_against(random_minimax_player, n_battles=1000)
 
     print(
-        "smart_minimax_player won %d / 1000 battles against minimax_player (this took %f seconds)"
+        "random_minimax_player won %d / 1000 battles against minimax_player (this took %f seconds)"
         % (
-            smart_minimax_player.n_won_battles, time.time() - start
+            random_minimax_player.n_won_battles, time.time() - start
         )
     )
 
