@@ -7,7 +7,7 @@
 import asyncio
 import time
 import sys
-import random
+from numpy.random import choice
 from typing import Tuple
 
 sys.path.append("..")
@@ -46,12 +46,12 @@ class RandomMinimaxPlayer(Player):
         child_nodes = starting_node.children
         child_scores = []
         for child in child_nodes:
-            if child.score <= 0:
-                child_scores.append(1)
+            if child.score < 0:
+                child_scores.append(0)
             else:
-                child_scores.append(child.score / 100)
+                child_scores.append(child.score / 1800)
         best_node = None
-        best_node = random.choices(child_nodes, weights = child_scores, k=1)[0]
+        best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
             #print(f"Best node is none for some reason! Length of child_nodes is {len(child_nodes)}")
             self.previous_action = None
