@@ -12,6 +12,7 @@ from SmartDamagePlayer import SmartDamagePlayer
 from MiniMax import MinimaxPlayer
 from SmartMiniMax import SmartMinimaxPlayer
 from RandomMiniMax import RandomMinimaxPlayer
+from SimpleRulePlayer import SimpleRulePlayer
 from poke_env.player.player import Player
 from poke_env.player.baselines import SimpleHeuristicsPlayer
 
@@ -39,6 +40,9 @@ async def main():
         battle_format="gen8randombattle",
     ))
     players["heurstic player"] = (SimpleHeuristicsPlayer(
+        battle_format="gen8randombattle",
+    ))
+    players["heurstic player"] = (SimpleRulePlayer(
         battle_format="gen8randombattle",
     ))
     
