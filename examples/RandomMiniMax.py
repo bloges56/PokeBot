@@ -53,7 +53,7 @@ class RandomMinimaxPlayer(Player):
             if child.score < 0:
                 child_scores.append(0)
             else:
-                child_scores.append(child.score / score_total)
+                child_scores.append(round(child.score / score_total, 2))
         best_node = None
         best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
