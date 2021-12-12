@@ -49,13 +49,15 @@ class RandomMinimaxPlayer(Player):
         for child in child_nodes:
             if child.score > 0:
                 score_total += child.score
-        for child in child_nodes:
-            if child.score < 0:
-                child_scores.append(0)
-            else:
-                child_scores.append(round(child.score / score_total, 2))
+        
         best_node = None
-        best_node = choice(child_nodes, 1, p=child_scores)[0]
+        if score_total != 0:
+            for child in child_nodes:
+                if child.score < 0:
+                    child_scores.append(0)
+                else:
+                    child_scores.append(round(child.score / score_total, 2))
+            best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
             #print(f"Best node is none for some reason! Length of child_nodes is {len(child_nodes)}")
             self.previous_action = None
