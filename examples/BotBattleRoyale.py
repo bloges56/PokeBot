@@ -11,209 +11,234 @@ from MaxDamagePlayer import MaxDamagePlayer
 from SmartDamagePlayer import SmartDamagePlayer
 from MiniMax import MinimaxPlayer
 from SmartMiniMax import SmartMinimaxPlayer
+from RandomMiniMax import RandomMinimaxPlayer
 from poke_env.player.player import Player
 from poke_env.player.baselines import SimpleHeuristicsPlayer
 
 async def main():
     start = time.time()
 
+    players = {}
     
-    # Random vs Max
-    random_player = RandomPlayer(
+    players["random player"] = (RandomPlayer(
         battle_format="gen8randombattle",
-    )
-    max_damage_player = MaxDamagePlayer(
+    ))
+    players["max damage player"] = (MaxDamagePlayer(
         battle_format="gen8randombattle",
-    )
-
-    await random_player.battle_against(max_damage_player, n_battles=1000)
-
-    print(
-        "random player won %d / 1000 battles against max_damage_player (this took %f seconds)"
-        % (
-            random_player.n_won_battles, time.time() - start
-        )
-    )
-
-    # Random vs Smart
-    start = time.time()
-    random_player = RandomPlayer(
+    ))
+    players["smart damage player"] = (SmartDamagePlayer(
         battle_format="gen8randombattle",
-    )
-    smart_damage_player = SmartDamagePlayer(
+    ))
+    players["minimax player"] = (MinimaxPlayer(
         battle_format="gen8randombattle",
-    )
-
-    await random_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "random player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            random_player.n_won_battles, time.time() - start
-        )
-    )
-
-    # Random vs Minimax
-    start = time.time()
-    random_player = RandomPlayer(
+    ))
+    players["smart minimax player"] = (SmartMinimaxPlayer(
         battle_format="gen8randombattle",
-    )
-    minimax_player = MinimaxPlayer(
+    ))
+    players["random minimax player"] = (RandomMinimaxPlayer(
         battle_format="gen8randombattle",
-    )
-
-    await random_player.battle_against(minimax_player, n_battles=1000)
-
-    print(
-        "random player won %d / 1000 battles against minimax_player (this took %f seconds)"
-        % (
-            random_player.n_won_battles, time.time() - start
-        )
-    )
-
-    # Random vs heuristic
-    start = time.time()
-    random_player = RandomPlayer(
+    ))
+    players["heurstic player"] = (SimpleHeuristicsPlayer(
         battle_format="gen8randombattle",
-    )
-    heuristic_player = SimpleHeuristicsPlayer(
-        battle_format="gen8randombattle",
-    )
-
-    await random_player.battle_against(heuristic_player, n_battles=1000)
-
-    print(
-        "random player won %d / 1000 battles against heuristic_player (this took %f seconds)"
-        % (
-            random_player.n_won_battles, time.time() - start
-        )
-    )
-
-    # Max vs Smart
-    start = time.time()
-    max_damage_player = MaxDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-
-    await max_damage_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "max_damage_player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            max_damage_player.n_won_battles, time.time() - start
-        )
-    )
+    ))
     
-    # Max vs Minimax
-    start = time.time()
-    max_damage_player = MaxDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    minimax_player = MinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
+    for i in range(len(players.keys())):
+        for j in range(len(players.keys()[i+1:])):
+            await players[players.keys()[i]].battle_against(players[players.keys()[j]], n_battles=1000)
 
-    await max_damage_player.battle_against(minimax_player, n_battles=1000)
-
-    print(
-        "max_damage_player won %d / 1000 battles against minimax_player (this took %f seconds)"
+    for player in players.keys():
+        print(
+        "%s won %d / 6000 battles"
         % (
-            max_damage_player.n_won_battles, time.time() - start
+            player, players[player].n_won_battles
         )
     )
+    # print(
+    #     "random player won %d / 1000 battles against max_damage_player (this took %f seconds)"
+    #     % (
+    #         random_player.n_won_battles, time.time() - start
+    #     )
+    # )
 
-    # Max vs Heuristic
-    start = time.time()
-    max_damage_player = MaxDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    heuristic_player = SimpleHeuristicsPlayer(
-        battle_format="gen8randombattle",
-    )
+    # # Random vs Smart
+    # start = time.time()
+    # random_player = RandomPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # smart_damage_player = SmartDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
 
-    await max_damage_player.battle_against(heuristic_player, n_battles=1000)
+    # await random_player.battle_against(smart_damage_player, n_battles=1000)
 
-    print(
-        "max_damage_player won %d / 1000 battles against heuristic_player (this took %f seconds)"
-        % (
-            max_damage_player.n_won_battles, time.time() - start
-        )
-    )
+    # print(
+    #     "random player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+    #     % (
+    #         random_player.n_won_battles, time.time() - start
+    #     )
+    # )
 
-    # Smart vs Minimax
-    start = time.time()
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    minimax_player = MinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
+    # # Random vs Minimax
+    # start = time.time()
+    # random_player = RandomPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # minimax_player = MinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # )
 
-    await smart_damage_player.battle_against(minimax_player, n_battles=1000)
+    # await random_player.battle_against(minimax_player, n_battles=1000)
 
-    print(
-        "smart_damage_player won %d / 1000 battles against minimax_player (this took %f seconds)"
-        % (
-            smart_damage_player.n_won_battles, time.time() - start
-        )
-    )
+    # print(
+    #     "random player won %d / 1000 battles against minimax_player (this took %f seconds)"
+    #     % (
+    #         random_player.n_won_battles, time.time() - start
+    #     )
+    # )
 
-    # Smart vs SMart Minimax
-    start = time.time()
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    smart_minimax_player = SmartMinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
+    # # Random vs heuristic
+    # start = time.time()
+    # random_player = RandomPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # heuristic_player = SimpleHeuristicsPlayer(
+    #     battle_format="gen8randombattle",
+    # )
 
-    await smart_damage_player.battle_against(smart_minimax_player, n_battles=1000)
+    # await random_player.battle_against(heuristic_player, n_battles=1000)
 
-    print(
-        "smart_damage_player won %d / 1000 battles against smart_minimax_player (this took %f seconds)"
-        % (
-            smart_damage_player.n_won_battles, time.time() - start
-        )
-    )
+    # print(
+    #     "random player won %d / 1000 battles against heuristic_player (this took %f seconds)"
+    #     % (
+    #         random_player.n_won_battles, time.time() - start
+    #     )
+    # )
 
-    # Smart vs Heuristic
-    start = time.time()
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    heuristic_player = SimpleHeuristicsPlayer(
-        battle_format="gen8randombattle",
-    )
+    # # Max vs Smart
+    # start = time.time()
+    # max_damage_player = MaxDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # smart_damage_player = SmartDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
 
-    await smart_damage_player.battle_against(heuristic_player, n_battles=1000)
+    # await max_damage_player.battle_against(smart_damage_player, n_battles=1000)
 
-    print(
-        "smart_damage_player won %d / 1000 battles against heuristic_player (this took %f seconds)"
-        % (
-            smart_damage_player.n_won_battles, time.time() - start
-        )
-    )
+    # print(
+    #     "max_damage_player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+    #     % (
+    #         max_damage_player.n_won_battles, time.time() - start
+    #     )
+    # )
+    
+    # # Max vs Minimax
+    # start = time.time()
+    # max_damage_player = MaxDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # minimax_player = MinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # )
 
-    # Minimax vs Heuristic
-    start = time.time()
-    minimax_player = MinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
-    heuristic_player = SimpleHeuristicsPlayer(
-        battle_format="gen8randombattle",
-    )
+    # await max_damage_player.battle_against(minimax_player, n_battles=1000)
 
-    await minimax_player.battle_against(heuristic_player, n_battles=1000)
+    # print(
+    #     "max_damage_player won %d / 1000 battles against minimax_player (this took %f seconds)"
+    #     % (
+    #         max_damage_player.n_won_battles, time.time() - start
+    #     )
+    # )
 
-    print(
-        "minimax_player won %d / 1000 battles against heuristic_player (this took %f seconds)"
-        % (
-            minimax_player.n_won_battles, time.time() - start
-        )
-    )
+    # # Max vs Heuristic
+    # start = time.time()
+    # max_damage_player = MaxDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # heuristic_player = SimpleHeuristicsPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+
+    # await max_damage_player.battle_against(heuristic_player, n_battles=1000)
+
+    # print(
+    #     "max_damage_player won %d / 1000 battles against heuristic_player (this took %f seconds)"
+    #     % (
+    #         max_damage_player.n_won_battles, time.time() - start
+    #     )
+    # )
+
+    # # Smart vs Minimax
+    # start = time.time()
+    # smart_damage_player = SmartDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # minimax_player = MinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+
+    # await smart_damage_player.battle_against(minimax_player, n_battles=1000)
+
+    # print(
+    #     "smart_damage_player won %d / 1000 battles against minimax_player (this took %f seconds)"
+    #     % (
+    #         smart_damage_player.n_won_battles, time.time() - start
+    #     )
+    # )
+
+    # # Smart vs SMart Minimax
+    # start = time.time()
+    # smart_damage_player = SmartDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # smart_minimax_player = SmartMinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+
+    # await smart_damage_player.battle_against(smart_minimax_player, n_battles=1000)
+
+    # print(
+    #     "smart_damage_player won %d / 1000 battles against smart_minimax_player (this took %f seconds)"
+    #     % (
+    #         smart_damage_player.n_won_battles, time.time() - start
+    #     )
+    # )
+
+    # # Smart vs Heuristic
+    # start = time.time()
+    # smart_damage_player = SmartDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # heuristic_player = SimpleHeuristicsPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+
+    # await smart_damage_player.battle_against(heuristic_player, n_battles=1000)
+
+    # print(
+    #     "smart_damage_player won %d / 1000 battles against heuristic_player (this took %f seconds)"
+    #     % (
+    #         smart_damage_player.n_won_battles, time.time() - start
+    #     )
+    # )
+
+    # # Minimax vs Heuristic
+    # start = time.time()
+    # minimax_player = MinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+    # heuristic_player = SimpleHeuristicsPlayer(
+    #     battle_format="gen8randombattle",
+    # )
+
+    # await minimax_player.battle_against(heuristic_player, n_battles=1000)
+
+    # print(
+    #     "minimax_player won %d / 1000 battles against heuristic_player (this took %f seconds)"
+    #     % (
+    #         minimax_player.n_won_battles, time.time() - start
+    #     )
+    # )
 
 if __name__ == "__main__":
         asyncio.get_event_loop().run_until_complete(main())
