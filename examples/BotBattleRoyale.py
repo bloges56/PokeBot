@@ -43,7 +43,7 @@ async def main():
     ))
     
     for i in range(len(players.keys())):
-        for j in range(i, len(players.keys())):
+        for j in range(i + 1, len(players.keys())):
             await players[list(players.keys())[i]].battle_against(players[list(players.keys())[j]], n_battles=1000)
             print("battle finished")
 
