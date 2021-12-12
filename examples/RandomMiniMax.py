@@ -56,7 +56,21 @@ class RandomMinimaxPlayer(Player):
                 if child.score < 0:
                     child_scores.append(0)
                 else:
-                    child_scores.append(round(child.score / score_total, 2))
+                    child_scores.append(round(child.score / score_total, 1))
+            if round(1 - sum(child_scores), 1) >= .1:
+                for i in range(len(child_scores)):
+                    if child_scores[i] > 0:
+                        child_scores[i] = round(child_scores[i] + .1, 1)
+                    if round(1 - sum(child_scores), 1) < .1:
+                        break
+            elif round(sum(child_scores) - 1,1) >= .1:
+                for i in range(len(child_scores)):
+                    if child_scores[i] > 0:
+                        child_scores[i] = round(child_scores[i] - .1, 1)
+                    if round(sum(child_scores) - 1,1) < .1:
+                        break
+            # if sum(child_scores) != 1:
+            #     print("no")
             best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
             #print(f"Best node is none for some reason! Length of child_nodes is {len(child_nodes)}")
@@ -214,7 +228,7 @@ async def main():
     await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
 
     print(
-        "smart minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        "random minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
         % (
             random_minimax_player.n_won_battles, time.time() - start
         )
