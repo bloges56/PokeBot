@@ -43,7 +43,7 @@ async def main():
     ))
     
     for i in range(len(players.keys())):
-        for j in range(len(players.keys()[i+1:])):
+        for j in range(i, len(players.keys())):
             await players[players.keys()[i]].battle_against(players[players.keys()[j]], n_battles=1000)
 
     for player in players.keys():
