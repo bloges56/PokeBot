@@ -42,7 +42,7 @@ async def main():
     players["heurstic player"] = (SimpleHeuristicsPlayer(
         battle_format="gen8randombattle",
     ))
-    players["heurstic player"] = (SimpleRulePlayer(
+    players["simple rule player"] = (SimpleRulePlayer(
         battle_format="gen8randombattle",
     ))
     
