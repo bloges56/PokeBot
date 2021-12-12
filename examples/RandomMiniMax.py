@@ -45,11 +45,15 @@ class RandomMinimaxPlayer(Player):
             self.minimax(starting_node, 0, True)
         child_nodes = starting_node.children
         child_scores = []
+        score_total = 0
+        for child in child_nodes:
+            if child.score > 0:
+                score_total += child.score
         for child in child_nodes:
             if child.score < 0:
                 child_scores.append(0)
             else:
-                child_scores.append(child.score / 1800)
+                child_scores.append(child.score / score_total)
         best_node = None
         best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
