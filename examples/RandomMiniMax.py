@@ -69,8 +69,6 @@ class RandomMinimaxPlayer(Player):
                         child_scores[i] = round(child_scores[i] - .1, 1)
                     if round(sum(child_scores) - 1,1) < .1:
                         break
-            # if sum(child_scores) != 1:
-            #     print("no")
             best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
             #print(f"Best node is none for some reason! Length of child_nodes is {len(child_nodes)}")
