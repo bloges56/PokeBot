@@ -7,6 +7,8 @@
 import asyncio
 import time
 import sys
+from numpy.random import choice
+from typing import Tuple
 
 sys.path.append("..")
 
@@ -14,15 +16,18 @@ import BattleUtilities
 from poke_env.player.random_player import RandomPlayer
 from MaxDamagePlayer import MaxDamagePlayer
 from SmartDamagePlayer import SmartDamagePlayer
+from MiniMax import MinimaxPlayer
 from poke_env.player.player import Player
 from poke_env.environment.move_category import MoveCategory
 from GameNode import GameNode
 from poke_env.environment.pokemon import Pokemon
 
-class MinimaxPlayer(Player): 
+class RandomMinimaxPlayer(Player): 
 
     previous_action = None
     maxDepth = 1 
+    statusWeight = 1
+
     # The nodes keep track of battle states, moves are transitions between states
     def choose_move(self, battle):
         # HP values for you and your opponent's Pokemon are a dictionary that maps Pokemon to HP
@@ -39,12 +44,32 @@ class MinimaxPlayer(Player):
         else: 
             self.minimax(starting_node, 0, True)
         child_nodes = starting_node.children
-        best_score = float('-inf')
-        best_node = None
+        child_scores = []
+        score_total = 0
         for child in child_nodes:
-            if child.score >= best_score: 
-                best_score = child.score
-                best_node = child
+            if child.score > 0:
+                score_total += child.score
+        
+        best_node = None
+        if score_total != 0:
+            for child in child_nodes:
+                if child.score < 0:
+                    child_scores.append(0)
+                else:
+                    child_scores.append(round(child.score / score_total, 1))
+            if round(1 - sum(child_scores), 1) >= .1:
+                for i in range(len(child_scores)):
+                    if child_scores[i] > 0:
+                        child_scores[i] = round(child_scores[i] + .1, 1)
+                    if round(1 - sum(child_scores), 1) < .1:
+                        break
+            elif round(sum(child_scores) - 1,1) >= .1:
+                for i in range(len(child_scores)):
+                    if child_scores[i] > 0:
+                        child_scores[i] = round(child_scores[i] - .1, 1)
+                    if round(sum(child_scores) - 1,1) < .1:
+                        break
+            best_node = choice(child_nodes, 1, p=child_scores)[0]
         if best_node == None: 
             #print(f"Best node is none for some reason! Length of child_nodes is {len(child_nodes)}")
             self.previous_action = None
@@ -124,15 +149,51 @@ class MinimaxPlayer(Player):
                 else:
                     damage = pokemon.current_hp - node.opponent_HP[pokemon] 
                     score += 3 * damage
-            #else: 
-                #print(f"Pokemon is {pokemon}, HP is None")
+            else: 
+                score += 50
         # Lose points for taking damage or getting knocked out
         for pokemon in node.current_HP.keys():
             if node.current_HP[pokemon] <= 0 and pokemon.current_hp > 0: 
                 score -= 100
-            else: 
+            elif pokemon.current_hp is None: 
+                score -= 50
+            else:
                 damage = (pokemon.current_hp / pokemon.max_hp) - (node.current_HP[pokemon] / pokemon.max_hp)
                 score -= damage
+        #+- 150 for sleep
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).status == "slp": 
+                score += 150 / self.statusWeight
+
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).status == "slp": 
+                score -= 150 / self.statusWeight
+        #+- 75 for toxic
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).status == "tox":  
+                score += 75 / self.statusWeight
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).status == "tox":  
+                score -= 75 / self.statusWeight
+        #+- 50 for paralysis
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).status == "par":  
+                score += 50 / self.statusWeight
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).status == "par":  
+                score -= 50 / self.statusWeight
+        #if opp pokemon physical attack is greater than special attack and it has burn status
+        for pokemon in node.battle.opponent_team.keys():
+            if node.battle.get_pokemon(pokemon).base_stats["atk"] > node.battle.get_pokemon(pokemon).base_stats["spe"] and node.battle.get_pokemon(pokemon).status == "brn": 
+                score += 125 / self.statusWeight
+            
+        for pokemon in node.battle.team.keys():
+            if node.battle.get_pokemon(pokemon, True).base_stats["atk"] > node.battle.get_pokemon(pokemon, True).base_stats["spe"] and node.battle.get_pokemon(pokemon, True).status == "brn": 
+                score += 125 / self.statusWeight
+
         # Lose points for getting outsped by opponent
         #if BattleUtilities.opponent_can_outspeed(node.current_pokemon, node.opponent_pokemon):
         #    score -= 25
@@ -158,16 +219,33 @@ async def main():
     smart_damage_player = SmartDamagePlayer(
         battle_format="gen8randombattle",
     )
-    minimax_player = MinimaxPlayer(
+    random_minimax_player = RandomMinimaxPlayer(
         battle_format="gen8randombattle",
     )
 
-    await minimax_player.battle_against(smart_damage_player, n_battles=1000)
+    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
 
     print(
-        "minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        "random minimax player won %d / 1000 battles against smart_damage_player (this took %f seconds)"
         % (
-            minimax_player.n_won_battles, time.time() - start
+            random_minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+    start = time.time()
+    minimax_player = MinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+    random_minimax_player = RandomMinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    await minimax_player.battle_against(random_minimax_player, n_battles=1000)
+
+    print(
+        "random_minimax_player won %d / 1000 battles against minimax_player (this took %f seconds)"
+        % (
+            random_minimax_player.n_won_battles, time.time() - start
         )
     )
 
