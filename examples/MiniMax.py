@@ -13,7 +13,6 @@ sys.path.append("..")
 import BattleUtilities
 from poke_env.player.random_player import RandomPlayer
 from MaxDamagePlayer import MaxDamagePlayer
-from RandomMiniMax import RandomMinimaxPlayer
 from SmartDamagePlayer import SmartDamagePlayer
 from poke_env.player.player import Player
 from poke_env.environment.move_category import MoveCategory
@@ -171,111 +170,6 @@ async def main():
             minimax_player.n_won_battles, time.time() - start
         )
     )
-
-    start = time.time()
-
-    # We create two players.
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    minimax_player = MinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
-
-    minimax_player.maxDepth = 2
-
-    await minimax_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "minimax player (depth 2) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            minimax_player.n_won_battles, time.time() - start
-        )
-    )
-
-    start = time.time()
-
-    # We create two players.
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    minimax_player = MinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
-
-    minimax_player.maxDepth = 3
-
-    await minimax_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "minimax player (depth 3) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            minimax_player.n_won_battles, time.time() - start
-        )
-    )
-
-    start = time.time()
-
-    # We create two players.
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    random_minimax_player = RandomMinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
-
-    random_minimax_player.statusWeight = 1
-
-    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "random minimax player (status weight 1) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            random_minimax_player.n_won_battles, time.time() - start
-        )
-    )
-
-    start = time.time()
-
-    # We create two players.
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    random_minimax_player = RandomMinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
-
-    random_minimax_player.statusWeight = 2
-
-    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "random minimax player (status weight 2) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            random_minimax_player.n_won_battles, time.time() - start
-        )
-    )
-
-    start = time.time()
-
-    # We create two players.
-    smart_damage_player = SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    )
-    random_minimax_player = RandomMinimaxPlayer(
-        battle_format="gen8randombattle",
-    )
-
-    random_minimax_player.statusWeight = 3
-
-    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
-
-    print(
-        "random minimax player (status weight 3) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
-        % (
-            random_minimax_player.n_won_battles, time.time() - start
-        )
-    )
-
+    
 if __name__ == "__main__":
         asyncio.get_event_loop().run_until_complete(main())
