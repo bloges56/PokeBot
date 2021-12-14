@@ -25,7 +25,7 @@ class SmartMinimaxPlayer(Player):
 
     previous_action = None
     maxDepth = 1 
-    statusWeight = 2
+    statusWeight = 1
 
     # The nodes keep track of battle states, moves are transitions between states
     def choose_move(self, battle):
