@@ -19,45 +19,173 @@ from poke_env.player.baselines import SimpleHeuristicsPlayer
 async def main():
     start = time.time()
 
-    players = {}
-    
-    players["random player"] = (RandomPlayer(
+    # We create two players.
+    smart_damage_player = SmartDamagePlayer(
         battle_format="gen8randombattle",
-    ))
-    players["max damage player"] = (MaxDamagePlayer(
+    )
+    minimax_player = MinimaxPlayer(
         battle_format="gen8randombattle",
-    ))
-    players["smart damage player"] = (SmartDamagePlayer(
-        battle_format="gen8randombattle",
-    ))
-    players["minimax player"] = (MinimaxPlayer(
-        battle_format="gen8randombattle",
-    ))
-    players["smart minimax player"] = (SmartMinimaxPlayer(
-        battle_format="gen8randombattle",
-    ))
-    players["random minimax player"] = (RandomMinimaxPlayer(
-        battle_format="gen8randombattle",
-    ))
-    players["heurstic player"] = (SimpleHeuristicsPlayer(
-        battle_format="gen8randombattle",
-    ))
-    players["simple rule player"] = (SimpleRulePlayer(
-        battle_format="gen8randombattle",
-    ))
-    
-    for i in range(len(players.keys())):
-        for j in range(i + 1, len(players.keys())):
-            await players[list(players.keys())[i]].battle_against(players[list(players.keys())[j]], n_battles=1000)
-            print("battle finished")
+    )
 
-    for player in players.keys():
-        print(
-        "%s won %d / 6000 battles"
+    await minimax_player.battle_against(smart_damage_player, n_battles=1000)
+
+    print(
+        "minimax player (depth 1) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
         % (
-            player, players[player].n_won_battles
+            minimax_player.n_won_battles, time.time() - start
         )
     )
+
+    start = time.time()
+
+    # We create two players.
+    smart_damage_player = SmartDamagePlayer(
+        battle_format="gen8randombattle",
+    )
+    minimax_player = MinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    minimax_player.maxDepth = 2
+
+    await minimax_player.battle_against(smart_damage_player, n_battles=1000)
+
+    print(
+        "minimax player (depth 2) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        % (
+            minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+    start = time.time()
+
+    # We create two players.
+    smart_damage_player = SmartDamagePlayer(
+        battle_format="gen8randombattle",
+    )
+    minimax_player = MinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    minimax_player.maxDepth = 3
+
+    await minimax_player.battle_against(smart_damage_player, n_battles=1000)
+
+    print(
+        "minimax player (depth 3) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        % (
+            minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+    start = time.time()
+
+    # We create two players.
+    smart_damage_player = SmartDamagePlayer(
+        battle_format="gen8randombattle",
+    )
+    random_minimax_player = RandomMinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    random_minimax_player.statusWeight = 1
+
+    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
+
+    print(
+        "random minimax player (status weight 1) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        % (
+            random_minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+    start = time.time()
+
+    # We create two players.
+    smart_damage_player = SmartDamagePlayer(
+        battle_format="gen8randombattle",
+    )
+    random_minimax_player = RandomMinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    random_minimax_player.statusWeight = 2
+
+    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
+
+    print(
+        "random minimax player (status weight 2) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        % (
+            random_minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+    start = time.time()
+
+    # We create two players.
+    smart_damage_player = SmartDamagePlayer(
+        battle_format="gen8randombattle",
+    )
+    random_minimax_player = RandomMinimaxPlayer(
+        battle_format="gen8randombattle",
+    )
+
+    random_minimax_player.statusWeight = 3
+
+    await random_minimax_player.battle_against(smart_damage_player, n_battles=1000)
+
+    print(
+        "random minimax player (status weight 3) won %d / 1000 battles against smart_damage_player (this took %f seconds)"
+        % (
+            random_minimax_player.n_won_battles, time.time() - start
+        )
+    )
+
+if __name__ == "__main__":
+        asyncio.get_event_loop().run_until_complete(main())
+    # start = time.time()
+
+    # players = {}
+    
+    # players["random player"] = (RandomPlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["max damage player"] = (MaxDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["smart damage player"] = (SmartDamagePlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["minimax player"] = (MinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["smart minimax player"] = (SmartMinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["random minimax player"] = (RandomMinimaxPlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["heurstic player"] = (SimpleHeuristicsPlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    # players["simple rule player"] = (SimpleRulePlayer(
+    #     battle_format="gen8randombattle",
+    # ))
+    
+    # for i in range(len(players.keys())):
+    #     for j in range(i + 1, len(players.keys())):
+    #         await players[list(players.keys())[i]].battle_against(players[list(players.keys())[j]], n_battles=1000)
+    #         print("battle finished")
+
+    # for player in players.keys():
+    #     print(
+    #     "%s won %d / 6000 battles"
+    #     % (
+    #         player, players[player].n_won_battles
+    #     )
+    # )
+    # if __name__ == "__main__":
+    #     asyncio.get_event_loop().run_until_complete(main())
     # print(
     #     "random player won %d / 1000 battles against max_damage_player (this took %f seconds)"
     #     % (
@@ -245,5 +373,3 @@ async def main():
     #     )
     # )
 
-if __name__ == "__main__":
-        asyncio.get_event_loop().run_until_complete(main())
